@@ -64,7 +64,53 @@ inline std::string join(const std::vector<std::string>& paths)
 
 inline bool absolute(const std::string& path)
 {
+#ifndef __WINDOWS__
   return strings::startsWith(path, os::PATH_SEPARATOR);
+#else
+  // NOTE: We do not use `PathIsRelative` here because it does not support long
+  // paths.
+  //
+  // See https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
+  // for details on paths. In short, an absolute path for files on Windows
+  // looks like one of the following:
+  //
+  //   1. "[A-Za-z]:\"
+  //   2. "[A-Za-z]:/"
+  //   3. "\\?\..."
+  //
+  // Note that "\\a\b" is a special case. This is a network path (server "a"),
+  // but not necessarily a long path. By definition this is also absolute.
+  //
+  // Also, by definition, a path like "\\?\..." is always absolute. This allows
+  // invalid paths that we may mistake as absolute when they are actually not
+  // a valid path. We make no attempt to catch invalid paths here.
+  //
+  // While Windows is documented to allow a path like '\file.txt', this is not
+  // really absolute in the POSIX sense. Thus, we don't call it absolute.
+  //
+  // NOLINT(whitespace/line_length)
+
+
+  // A UNC name of any format, which always start with two backslash
+  // characters ("\\").
+  if (strings::startsWith(path, "\\\\")) {
+    return true;
+  }
+
+  // A disk designator with a backslash, for example "C:\" or "d:\".
+  if (path.length() < 3) {
+    return false;
+  }
+
+  std::string letter = path.substr(0, 1);
+  if (!((letter >= "A" && letter <= "Z") ||
+        (letter >= "a" && letter <= "z"))) {
+    return false;
+  }
+
+  std::string colon = path.substr(1, 2);
+  return colon == ":\\" || colon == ":/";
+#endif // __WINDOWS__
 }
 
 } // namespace path {
