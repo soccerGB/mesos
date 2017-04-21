@@ -1,0 +1,13 @@
+{
+    "cmake.preferredGenerators": [
+        "Visual Studio 14 2015 Win64"
+    ],
+    "cmake.configureSettings": {
+        "ENABLE_LIBEVENT": 1,
+        "HAS_AUTHENTICATION": 0
+    },
+    "cmake.buildEnvironment": {
+        "PreferredToolArchitecture": "x64"
+    },
+    "python.linting.pylintEnabled": false
+}
