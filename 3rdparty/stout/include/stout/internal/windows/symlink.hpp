@@ -59,8 +59,8 @@ inline Try<SymbolicLink> query_symbolic_link_data(const std::string& path)
   // Windows has no built-in way to tell whether a path points at a symbolic
   // link; but, we know that symbolic links are implemented with reparse
   // points, so we begin by checking that.
-  Try<bool> is_reparse_point =
-    reparse_point_attribute_set(absolute_path.get());
+  Try<bool> is_reparse_point = reparse_point_attribute_set(
+      ::internal::windows::longpath(absolute_path.get()));
 
   if (is_reparse_point.isError()) {
     return Error(is_reparse_point.error());
