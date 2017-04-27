@@ -1,6 +1,6 @@
 {
     "cmake.preferredGenerators": [
-        "Visual Studio 14 2015 Win64"
+        "Visual Studio 15 2017 Win64"
     ],
     "cmake.configureSettings": {
         "ENABLE_LIBEVENT": 1,
