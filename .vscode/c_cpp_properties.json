@@ -8,7 +8,11 @@
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": ""
+                "databaseFilename": "",
+                "path": [
+                    "/usr/include",
+                    "/usr/local/include"
+                ]
             }
         },
         {
@@ -19,17 +23,32 @@
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": ""
+                "databaseFilename": "",
+                "path": [
+                    "/usr/include",
+                    "/usr/local/include"
+                ]
             }
         },
         {
             "name": "Win32",
             "includePath": [
+                "${workspaceRoot}",
+                "${workspaceRoot}/include",
+                "${workspaceRoot}/3rdparty/libprocess/include",
+                "${workspaceRoot}/3rdparty/stout/include",
+                "${workspaceRoot}/build/3rdparty/curl-7.43.0/src/curl-7.43.0/include",
+                "${workspaceRoot}/build/3rdparty/gmock-1.7.0/src/gmock-1.7.0/include",
+                "${workspaceRoot}/build/3rdparty/libevent-2.1.5-beta/src/libevent-2.1.5-beta/include",
+                "${workspaceRoot}/build/3rdparty/glog-da816ea70/src/glog-da816ea70/src/windows/",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.10.25017/include"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": ""
+                "databaseFilename": "",
+                "path": [
+                    "C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.10.25017/include"
+                ]
             }
         }
     ]
