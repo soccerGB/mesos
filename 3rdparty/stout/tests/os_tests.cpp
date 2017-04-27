@@ -43,6 +43,7 @@
 #include <stout/os/int_fd.hpp>
 #include <stout/os/kill.hpp>
 #include <stout/os/killtree.hpp>
+#include <stout/os/stat.hpp>
 #include <stout/os/write.hpp>
 #include <stout/stopwatch.hpp>
 #include <stout/strings.hpp>
@@ -214,6 +215,7 @@ TEST_F(OsTest, Nonblock)
 // non-existing file.
 TEST_F_TEMP_DISABLED_ON_WINDOWS(OsTest, SYMLINK_Size)
 {
+  using os::stat::FollowSymlink;
   const string file = path::join(os::getcwd(), UUID::random().toString());
 
   const Bytes size = 1053;
@@ -222,8 +224,10 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(OsTest, SYMLINK_Size)
 
   // The reported file size should be the same whether following links
   // or not, given that the input parameter is not a link.
-  EXPECT_SOME_EQ(size, os::stat::size(file, os::stat::FOLLOW_SYMLINK));
-  EXPECT_SOME_EQ(size, os::stat::size(file, os::stat::DO_NOT_FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(size,
+      os::stat::size(file, FollowSymlink::FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(size,
+      os::stat::size(file, FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
 
   EXPECT_ERROR(os::stat::size("aFileThatDoesNotExist"));
 
@@ -232,11 +236,11 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(OsTest, SYMLINK_Size)
   ASSERT_SOME(fs::symlink(file, link));
 
   // Following links we expect the file's size, not the link's.
-  EXPECT_SOME_EQ(size, os::stat::size(link, os::stat::FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(size, os::stat::size(link, FollowSymlink::FOLLOW_SYMLINK));
 
   // Not following links, we expect the string length of the linked path.
   EXPECT_SOME_EQ(Bytes(file.size()),
-                 os::stat::size(link, os::stat::DO_NOT_FOLLOW_SYMLINK));
+      os::stat::size(link, FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
 }
 
 
@@ -756,7 +760,7 @@ TEST_F(OsTest, User)
 
 TEST_F(OsTest, SYMLINK_Chown)
 {
-  using os::stat::DO_NOT_FOLLOW_SYMLINK;
+  using os::stat::FollowSymlink;
 
   Result<uid_t> uid = os::getuid();
   ASSERT_SOME(uid);
@@ -783,33 +787,46 @@ TEST_F(OsTest, SYMLINK_Chown)
   // symlink does not chown that subtree.
   EXPECT_SOME(fs::symlink("chown/one/two", "two.link"));
   EXPECT_SOME(os::chown(9, 9, "two.link", true));
-  EXPECT_SOME_EQ(9u, os::stat::uid("two.link", DO_NOT_FOLLOW_SYMLINK));
-  EXPECT_SOME_EQ(0u, os::stat::uid("chown", DO_NOT_FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(9u,
+      os::stat::uid("two.link", FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
   EXPECT_SOME_EQ(0u,
-      os::stat::uid("chown/one/two/three/file", DO_NOT_FOLLOW_SYMLINK));
+      os::stat::uid("chown", FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(0u,
+      os::stat::uid("chown/one/two/three/file",
+                    FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
 
   // Recursively chown the whole tree.
   EXPECT_SOME(os::chown(9, 9, "chown", true));
-  EXPECT_SOME_EQ(9u, os::stat::uid("chown", DO_NOT_FOLLOW_SYMLINK));
   EXPECT_SOME_EQ(9u,
-      os::stat::uid("chown/one/two/three/file", DO_NOT_FOLLOW_SYMLINK));
+      os::stat::uid("chown", FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
   EXPECT_SOME_EQ(9u,
-      os::stat::uid("chown/one/two/three/link", DO_NOT_FOLLOW_SYMLINK));
+      os::stat::uid("chown/one/two/three/file",
+                    FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(9u,
+      os::stat::uid("chown/one/two/three/link",
+                    FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
 
   // Chown the subtree with the embedded link back and verify that it
   // doesn't follow back to the top of the tree.
   EXPECT_SOME(os::chown(0, 0, "chown/one/two/three", true));
-  EXPECT_SOME_EQ(9u, os::stat::uid("chown", DO_NOT_FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(9u,
+      os::stat::uid("chown", FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
   EXPECT_SOME_EQ(0u,
-      os::stat::uid("chown/one/two/three", DO_NOT_FOLLOW_SYMLINK));
+      os::stat::uid("chown/one/two/three",
+                    FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
   EXPECT_SOME_EQ(0u,
-      os::stat::uid("chown/one/two/three/link", DO_NOT_FOLLOW_SYMLINK));
+      os::stat::uid("chown/one/two/three/link",
+                    FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
 
   // Verify that non-recursive chown changes the directory and not
   // its contents.
   EXPECT_SOME(os::chown(0, 0, "chown/one", false));
-  EXPECT_SOME_EQ(0u, os::stat::uid("chown/one", DO_NOT_FOLLOW_SYMLINK));
-  EXPECT_SOME_EQ(9u, os::stat::uid("chown/one/file", DO_NOT_FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(0u,
+      os::stat::uid("chown/one",
+                    FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
+  EXPECT_SOME_EQ(9u,
+      os::stat::uid("chown/one/file",
+                    FollowSymlink::DO_NOT_FOLLOW_SYMLINK));
 }
 
 

@@ -34,15 +34,16 @@ namespace os {
 namespace stat {
 
 // Forward declaration.
+enum class FollowSymlink;
 inline bool islink(const std::string& path);
 
 inline bool isdir(
     const std::string& path,
-    const FollowSymlink follow = FOLLOW_SYMLINK)
+    const FollowSymlink follow = FollowSymlink::FOLLOW_SYMLINK)
 {
   // A symlink itself is not a directory.
   // If it's not a link, we ignore `follow`.
-  if (follow == DO_NOT_FOLLOW_SYMLINK && islink(path)) {
+  if (follow == FollowSymlink::DO_NOT_FOLLOW_SYMLINK && islink(path)) {
     return false;
   }
 
@@ -59,13 +60,13 @@ inline bool isdir(
 
 inline bool isfile(
     const std::string& path,
-    const FollowSymlink follow = FOLLOW_SYMLINK)
+    const FollowSymlink follow = FollowSymlink::FOLLOW_SYMLINK)
 {
   // A symlink itself is a file, but not a regular file.
   // On POSIX, this check is done with `S_IFREG`, which
   // returns false for symbolic links.
   // If it's not a link, we ignore `follow`.
-  if (follow == DO_NOT_FOLLOW_SYMLINK && islink(path)) {
+  if (follow == FollowSymlink::DO_NOT_FOLLOW_SYMLINK && islink(path)) {
     return false;
   }
 
@@ -95,10 +96,10 @@ inline bool islink(const std::string& path)
 // name (strlen).
 inline Try<Bytes> size(
     const std::string& path,
-    const FollowSymlink follow = FOLLOW_SYMLINK)
+    const FollowSymlink follow = FollowSymlink::FOLLOW_SYMLINK)
 {
   switch (follow) {
-    case DO_NOT_FOLLOW_SYMLINK: {
+    case FollowSymlink::DO_NOT_FOLLOW_SYMLINK: {
       Try<::internal::windows::SymbolicLink> symlink =
         ::internal::windows::query_symbolic_link_data(path);
 
@@ -109,7 +110,7 @@ inline Try<Bytes> size(
       }
       break;
     }
-    case FOLLOW_SYMLINK: {
+    case FollowSymlink::FOLLOW_SYMLINK: {
       struct _stat s;
 
       if (::_stat(path.c_str(), &s) < 0) {
@@ -127,9 +128,9 @@ inline Try<Bytes> size(
 
 inline Try<long> mtime(
     const std::string& path,
-    const FollowSymlink follow = FOLLOW_SYMLINK)
+    const FollowSymlink follow = FollowSymlink::FOLLOW_SYMLINK)
 {
-  if (follow == DO_NOT_FOLLOW_SYMLINK) {
+  if (follow == FollowSymlink::DO_NOT_FOLLOW_SYMLINK) {
     Try<::internal::windows::SymbolicLink> symlink =
       ::internal::windows::query_symbolic_link_data(path);
 
@@ -159,11 +160,11 @@ inline Try<long> mtime(
 
 inline Try<mode_t> mode(
     const std::string& path,
-    const FollowSymlink follow = FOLLOW_SYMLINK)
+    const FollowSymlink follow = FollowSymlink::FOLLOW_SYMLINK)
 {
   struct _stat s;
 
-  if (follow == DO_NOT_FOLLOW_SYMLINK && islink(path)) {
+  if (follow == FollowSymlink::DO_NOT_FOLLOW_SYMLINK && islink(path)) {
     return Error("lstat not supported for symlink '" + path + "'");
   }
 
@@ -177,11 +178,11 @@ inline Try<mode_t> mode(
 
 inline Try<dev_t> dev(
     const std::string& path,
-    const FollowSymlink follow = FOLLOW_SYMLINK)
+    const FollowSymlink follow = FollowSymlink::FOLLOW_SYMLINK)
 {
   struct _stat s;
 
-  if (follow == DO_NOT_FOLLOW_SYMLINK && islink(path)) {
+  if (follow == FollowSymlink::DO_NOT_FOLLOW_SYMLINK && islink(path)) {
     return Error("lstat not supported for symlink '" + path + "'");
   }
 
@@ -195,11 +196,11 @@ inline Try<dev_t> dev(
 
 inline Try<ino_t> inode(
     const std::string& path,
-    const FollowSymlink follow = FOLLOW_SYMLINK)
+    const FollowSymlink follow = FollowSymlink::FOLLOW_SYMLINK)
 {
   struct _stat s;
 
-  if (follow == DO_NOT_FOLLOW_SYMLINK) {
+  if (follow == FollowSymlink::DO_NOT_FOLLOW_SYMLINK) {
       return Error("Non-following stat not supported for '" + path + "'");
   }
 
