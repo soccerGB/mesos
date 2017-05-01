@@ -978,8 +978,11 @@ TEST(FlagsTest, JSON)
 class FlagsFileTest : public TemporaryDirectoryTest {};
 
 
-// TODO(hausdorff): Enable this test on Windows. Currently `flags::parse`
-// assumes filesystems are rooted at '/'. See MESOS-5937.
+#ifndef __WINDOWS__
+
+// This test is testing deprecated code. This code never existed on Windows,
+// and is thus not appropriate to deprecate.
+
 TEST_F(FlagsFileTest, JSONFile)
 {
   class TestFlags : public virtual FlagsBase
@@ -1015,6 +1018,8 @@ TEST_F(FlagsFileTest, JSONFile)
 
   ASSERT_SOME_EQ(object, flags.json);
 }
+
+#endif // #ifndef __WINDOWS__
 
 
 TEST_F(FlagsFileTest, FilePrefix)

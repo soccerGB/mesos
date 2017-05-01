@@ -87,13 +87,17 @@ inline Try<net::IP> parse(const std::string& value)
 template <>
 inline Try<JSON::Object> parse(const std::string& value)
 {
+#ifndef __WINDOWS__
   // A value that already starts with 'file://' will properly be
   // loaded from the file and put into 'value' but if it starts with
   // '/' we need to explicitly handle it for backwards compatibility
   // reasons (because we used to handle it before we introduced the
   // 'fetch' mechanism for flags that first fetches the data from URIs
   // such as 'file://').
-  if (path::absolute(value)) {
+  //
+  // NOTE: this code is deprecated only on Linux. For Windows, we never
+  // supported this to begin with.
+  if (strings::startsWith(value, "/")) {
     LOG(WARNING) << "Specifying an absolute filename to read a command line "
                     "option out of without using 'file:// is deprecated and "
                     "will be removed in a future release. Simply adding "
@@ -106,6 +110,8 @@ inline Try<JSON::Object> parse(const std::string& value)
     }
     return JSON::parse<JSON::Object>(read.get());
   }
+#endif // #ifndef __WINDOWS__
+
   return JSON::parse<JSON::Object>(value);
 }
 
