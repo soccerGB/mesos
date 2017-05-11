@@ -293,30 +293,6 @@ inline Try<std::string> getHostname(const IP& ip)
 }
 
 
-// Returns the names of all the link devices in the system.
-inline Try<std::set<std::string>> links()
-{
-#if !defined(__linux__) && !defined(__APPLE__) && !defined(__FreeBSD__)
-  return Error("Not implemented");
-#else
-  struct ifaddrs* ifaddr = nullptr;
-  if (getifaddrs(&ifaddr) == -1) {
-    return ErrnoError();
-  }
-
-  std::set<std::string> names;
-  for (struct ifaddrs* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
-    if (ifa->ifa_name != nullptr) {
-      names.insert(ifa->ifa_name);
-    }
-  }
-
-  freeifaddrs(ifaddr);
-  return names;
-#endif
-}
-
-
 // Returns a Try of the IP for the provided hostname or an error if no IP is
 // obtained.
 inline Try<IP> getIP(const std::string& hostname, int family = AF_UNSPEC)
