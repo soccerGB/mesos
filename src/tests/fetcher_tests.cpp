@@ -94,7 +94,7 @@ public:
 };
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, FileURI)
+TEST_F(FetcherTest, FileURI)
 {
   string fromDir = path::join(os::getcwd(), "from");
   ASSERT_SOME(os::mkdir(fromDir));
@@ -103,6 +103,9 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, FileURI)
 
   string localFile = path::join(os::getcwd(), "test");
   EXPECT_FALSE(os::exists(localFile));
+
+  // Test code
+  testFile = strings::replace(testFile, "\\", "/");
 
   slave::Flags flags;
   flags.launcher_dir = getLauncherDir();
@@ -126,11 +129,12 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, FileURI)
 }
 
 
-// TODO(hausdorff): `os::getuid` does not exist on Windows.
+// TODO(jeffaco): Test uses os::getuid(), which does not exist on Windows.
+//     Disable test until privilege model is worked out on Windows.
 #ifndef __WINDOWS__
 // Tests that non-root users are unable to fetch root-protected files on the
 // local filesystem.
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ROOT_RootProtectedFileURI)
+TEST_F(FetcherTest, ROOT_RootProtectedFileURI)
 {
   const string user = "nobody";
   ASSERT_SOME(os::getuid(user));
@@ -151,7 +155,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ROOT_RootProtectedFileURI)
   commandInfo.set_user(user);
 
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value("file://" + testFile);
+  uri->set_value(path::uri(testFile));
 
   Fetcher fetcher(flags);
 
@@ -164,7 +168,8 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ROOT_RootProtectedFileURI)
 #endif // __WINDOWS__
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, CustomOutputFileSubdirectory)
+//TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, CustomOutputFileSubdirectory)
+TEST_F(FetcherTest, CustomOutputFileSubdirectory)
 {
   string testFile = path::join(os::getcwd(), "test");
   EXPECT_SOME(os::write(testFile, "data"));
@@ -181,7 +186,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, CustomOutputFileSubdirectory)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value("file://" + testFile);
+  uri->set_value(path::uri(testFile));
   uri->set_output_file(customOutputFile);
 
   Fetcher fetcher(flags);
@@ -218,7 +223,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, AbsoluteCustomSubdirectoryFails)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value("file://" + testFile);
+  uri->set_value(path::uri(testFile));
   uri->set_output_file(customOutputFile);
 
   Fetcher fetcher(flags);
@@ -257,7 +262,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, InvalidUser)
   commandInfo.set_user(UUID::random().toString());
 
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value("file://" + testFile);
+  uri->set_value(path::uri(testFile));
 
   Fetcher fetcher(flags);
 
@@ -292,7 +297,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, NonExistingFile)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value("file://" + testFile);
+  uri->set_value(path::uri(testFile));
 
   Fetcher fetcher(flags);
 
@@ -454,6 +459,7 @@ public:
 
 
 TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, OSNetUriTest)
+//TEST_F(FetcherTest, OSNetUriTest)
 {
   Http http;
 
@@ -797,7 +803,8 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ExtractGzipFile)
 }
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, UNZIP_ExtractFile)
+//TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, UNZIP_ExtractFile)
+TEST_F(FetcherTest, UNZIP_ExtractFile)
 {
   // Construct a tmp file that can be fetched and archived with zip.
   string fromDir = path::join(os::getcwd(), "from");

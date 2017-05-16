@@ -35,18 +35,13 @@ set(FETCHER_EXECUTABLE_SRC fetcher.cpp)
 add_executable(${DEFAULT_EXECUTOR_TARGET} ${DEFAULT_EXECUTOR_SRC})
 add_executable(${MESOS_EXECUTOR} ${EXECUTOR_EXECUTABLE_SRC})
 
-if (NOT WIN32)
-  add_executable(${MESOS_FETCHER} ${FETCHER_EXECUTABLE_SRC})
-endif ()
+add_executable(${MESOS_FETCHER} ${FETCHER_EXECUTABLE_SRC})
 
 # ADD LINKER FLAGS (generates, e.g., -lglog on Linux).
 ######################################################
 target_link_libraries(${DEFAULT_EXECUTOR_TARGET} ${MESOS_LIBS_TARGET})
 target_link_libraries(${MESOS_EXECUTOR} ${MESOS_LIBS_TARGET})
-
-if (NOT WIN32)
-  target_link_libraries(${MESOS_FETCHER} ${MESOS_LIBS_TARGET})
-endif ()
+target_link_libraries(${MESOS_FETCHER} ${MESOS_LIBS_TARGET})
 
 # ADD BINARY DEPENDENCIES (tells CMake what to compile/build first).
 ####################################################################
@@ -58,8 +53,5 @@ add_dependencies(
 
 add_dependencies(${DEFAULT_EXECUTOR_TARGET} ${MESOS_LIBS_TARGET})
 add_dependencies(${MESOS_EXECUTOR}          ${MESOS_LIBS_TARGET})
-
-if (NOT WIN32)
-  add_dependencies(${MESOS_TARGET} ${MESOS_FETCHER})
-  add_dependencies(${MESOS_FETCHER} ${MESOS_LIBS_TARGET})
-endif ()
+add_dependencies(${MESOS_TARGET} ${MESOS_FETCHER})
+add_dependencies(${MESOS_FETCHER} ${MESOS_LIBS_TARGET})

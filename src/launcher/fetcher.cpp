@@ -29,6 +29,7 @@
 #include <stout/strings.hpp>
 
 #include <stout/os/constants.hpp>
+#include <stout/os/copyfile.hpp>
 
 #include <mesos/mesos.hpp>
 
@@ -193,21 +194,7 @@ static Try<string> copyFile(
     const string& sourcePath,
     const string& destinationPath)
 {
-  int status = os::spawn("cp", {"cp", sourcePath, destinationPath});
-
-  if (status == -1) {
-    return ErrnoError("Failed to copy '" + sourcePath + "'");
-  }
-
-  if (!WSUCCEEDED(status)) {
-    return Error(
-        "Failed to copy '" + sourcePath + "': " + WSTRINGIFY(status));
-  }
-
-  LOG(INFO) << "Copied resource '" << sourcePath
-            << "' to '" << destinationPath << "'";
-
-  return destinationPath;
+  return os::copyfile(sourcePath, destinationPath);
 }
 
 

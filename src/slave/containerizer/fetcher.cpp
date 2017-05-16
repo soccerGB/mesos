@@ -777,7 +777,12 @@ Future<Nothing> FetcherProcess::run(
       return Nothing();
   }
 
+#ifndef __WINDOWS__
   string fetcherPath = path::join(flags.launcher_dir, "mesos-fetcher");
+#else
+  // On Windows, executables have an extension of .exe
+  string fetcherPath = path::join(flags.launcher_dir, "mesos-fetcher.exe");
+#endif
   Result<string> realpath = os::realpath(fetcherPath);
 
   if (!realpath.isSome()) {
