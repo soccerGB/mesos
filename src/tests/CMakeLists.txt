@@ -102,6 +102,7 @@ set(MESOS_TESTS_SRC
   fetcher_tests.cpp
   files_tests.cpp
   gc_tests.cpp
+  hdfs_tests.cpp
   health_check_tests.cpp
   hierarchical_allocator_tests.cpp
   hook_tests.cpp
@@ -160,7 +161,6 @@ if (NOT WIN32)
     dynamic_weights_tests.cpp
     examples_tests.cpp
     fetcher_cache_tests.cpp
-    hdfs_tests.cpp
     log_tests.cpp
     logging_tests.cpp
     master_allocator_tests.cpp

@@ -479,6 +479,7 @@ set(MESOS_SRC
   ${DOCKER_SRC}
   ${EXECUTOR_SRC}
   ${FILES_SRC}
+  ${HDFS_SRC}
   ${HEALTH_CHECK_SRC}
   ${INTERNAL_SRC}
   ${LOCAL_SRC}
@@ -501,7 +502,7 @@ set(MESOS_SRC
 if (NOT WIN32)
   set(MESOS_SRC
     ${MESOS_SRC}
-    ${HDFS_SRC}
+    # ${HDFS_SRC}
     ${LOG_SRC}
     ${POSIX_SRC}
     )

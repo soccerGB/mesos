@@ -52,9 +52,12 @@ public:
     ASSERT_SOME(os::touch(hadoop));
 
     // Make sure the script has execution permission.
+    // Not clear how to handle permissions on Windows at this time ...
+#ifndef __WINDOWS__
     ASSERT_SOME(os::chmod(
         hadoop,
         S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
+#endif // __WINDOWS__
   }
 
 protected:
@@ -64,7 +67,7 @@ protected:
 
 // This test verifies the 'HDFS::exists(path)' method. We emulate the
 // hadoop client by testing the existence of a local file.
-TEST_F(HdfsTest, Exists)
+TEST_F_TEMP_DISABLED_ON_WINDOWS(HdfsTest, Exists)
 {
   // The script emulating 'hadoop fs -test -e <path>'.
   // NOTE: We emulate a version call here which is exercised when
@@ -92,7 +95,7 @@ TEST_F(HdfsTest, Exists)
 
 // This test verifies the 'HDFS::du(path)' method. We emulate the
 // hadoop client by doing a 'du' on the local filesystem.
-TEST_F(HdfsTest, Du)
+TEST_F_TEMP_DISABLED_ON_WINDOWS(HdfsTest, Du)
 {
   // The script emulating 'hadoop fs -du <path>'.
   // NOTE: We emulate a version call here which is exercised when
@@ -118,7 +121,7 @@ TEST_F(HdfsTest, Du)
 
 // This is the same test as HdfsTest::Du except it emulates a HDFS
 // version that returns 3 fields for the du subcommand.
-TEST_F(HdfsTest, ThreeFieldDu)
+TEST_F_TEMP_DISABLED_ON_WINDOWS(HdfsTest, ThreeFieldDu)
 {
   // The script emulating 'hadoop fs -du <path>'.
   // NOTE: We emulate a version call here which is exercised when
@@ -144,7 +147,7 @@ TEST_F(HdfsTest, ThreeFieldDu)
 
 // This test verifies the 'HDFS::rm(path)' method. We emulate the
 // hadoop client by removing a file on the local filesystem.
-TEST_F(HdfsTest, Rm)
+TEST_F_TEMP_DISABLED_ON_WINDOWS(HdfsTest, Rm)
 {
   // The script emulating 'hadoop fs -rm <path>'.
   // NOTE: We emulate a version call here which is exercised when
@@ -174,7 +177,7 @@ TEST_F(HdfsTest, Rm)
 
 // This test verifies the 'HDFS::copyFromLocal(from, to)' method. We
 // emulate the hadoop client by doing a 'cp' on the local filesystem.
-TEST_F(HdfsTest, CopyFromLocal)
+TEST_F_TEMP_DISABLED_ON_WINDOWS(HdfsTest, CopyFromLocal)
 {
   // The script emulating 'hadoop fs -copyFromLocal <from> <to>'.
   // NOTE: We emulate a version call here which is exercised when
@@ -204,7 +207,7 @@ TEST_F(HdfsTest, CopyFromLocal)
 
 // This test verifies the 'HDFS::copyToLocal(from, to)' method. We
 // emulate the hadoop client by doing a 'cp' on the local filesystem.
-TEST_F(HdfsTest, CopyToLocal)
+TEST_F_TEMP_DISABLED_ON_WINDOWS(HdfsTest, CopyToLocal)
 {
   // The script emulating 'hadoop fs -copyToLocal <from> <to>'.
   // NOTE: We emulate a version call here which is exercised when

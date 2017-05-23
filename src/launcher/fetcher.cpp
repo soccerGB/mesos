@@ -264,12 +264,15 @@ static Try<string> download(
 // so that someone can do: os::chmod(path, EXECUTABLE_CHMOD_FLAGS).
 static Try<string> chmodExecutable(const string& filePath)
 {
+  // Not clear how to handle permissions on Windows at this time ...
+#ifndef __WINDOWS__
   Try<Nothing> chmod = os::chmod(
       filePath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
   if (chmod.isError()) {
     return Error("Failed to chmod executable '" +
                  filePath + "': " + chmod.error());
   }
+#endif // __WINDOWS__
 
   return filePath;
 }
@@ -479,6 +482,9 @@ static Try<Nothing> createCacheDirectory(const FetcherInfo& fetcherInfo)
       if (fetcherInfo.has_user()) {
         // Fetching is performed as the task's user,
         // so chown the cache directory.
+
+        // Not clear how to handle permissions on Windows at this time ...
+#ifndef __WINDOWS__
         Try<Nothing> chown = os::chown(
             fetcherInfo.user(),
             fetcherInfo.cache_directory(),
@@ -487,6 +493,7 @@ static Try<Nothing> createCacheDirectory(const FetcherInfo& fetcherInfo)
         if (chown.isError()) {
           return chown;
         }
+#endif // __WINDOWS__
       }
 
       break;
@@ -553,12 +560,15 @@ int main(int argc, char* argv[])
   // If the `FetcherInfo` specifies a user, use `os::su()` to fetch files as the
   // task's user to ensure that filesystem permissions are enforced.
   if (fetcherInfo.get().has_user()) {
+    // Not clear how to handle permissions on Windows at this time ...
+#ifndef __WINDOWS__
     result = os::su(fetcherInfo.get().user());
     if (result.isError()) {
       EXIT(EXIT_FAILURE)
         << "Fetcher could not execute `os::su()` for user '"
         << fetcherInfo.get().user() << "'";
     }
+#endif // __WINDOWS__
   }
 
   const Option<string> cacheDirectory =
