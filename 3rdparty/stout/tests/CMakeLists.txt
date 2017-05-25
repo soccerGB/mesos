@@ -66,6 +66,7 @@ endif ()
 
 set(STOUT_OS_TESTS_SRC
   ${STOUT_OS_TESTS_SRC}
+  os/copyfile_tests.cpp
   os/env_tests.cpp
   os/filesystem_tests.cpp
   os/process_tests.cpp
