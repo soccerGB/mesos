@@ -91,7 +91,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(CredentialsTest, AuthenticatedSlaveText)
 
   ASSERT_SOME(os::close(fd.get()));
 
-  map<string, Option<string>> values{{"credentials", Some("file://" + path)}};
+  map<string, Option<string>> values{{"credentials", Some(path::uri(path))}};
 
   master::Flags masterFlags = CreateMasterFlags();
   masterFlags.load(values, true);
@@ -144,7 +144,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(CredentialsTest, AuthenticatedSlaveJSON)
 
   ASSERT_SOME(os::close(fd.get()));
 
-  map<string, Option<string>> values{{"credentials", Some("file://" + path)}};
+  map<string, Option<string>> values{{"credentials", Some(path::uri(path))}};
 
   master::Flags masterFlags = CreateMasterFlags();
   masterFlags.load(values, true);

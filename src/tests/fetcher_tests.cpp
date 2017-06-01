@@ -112,7 +112,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, FileURI)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value("file://" + testFile);
+  uri->set_value(path::uri(testFile));
 
   Fetcher fetcher(flags);
 

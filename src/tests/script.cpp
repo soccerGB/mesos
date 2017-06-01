@@ -132,7 +132,7 @@ void execute(const string& script)
     CHECK_SOME(os::write(credentialsPath, credentials))
       << "Failed to write credentials to '" << credentialsPath << "'";
 
-    os::setenv("MESOS_CREDENTIALS", "file://" + credentialsPath);
+    os::setenv("MESOS_CREDENTIALS", path::uri(credentialsPath));
 
     // We set test credentials here for example frameworks to use.
     os::setenv("DEFAULT_PRINCIPAL", DEFAULT_CREDENTIAL.principal());
@@ -171,7 +171,7 @@ void execute(const string& script)
     CHECK_SOME(os::write(aclsPath, stringify(JSON::protobuf(acls))))
       << "Failed to write ACLs to '" << aclsPath << "'";
 
-    os::setenv("MESOS_ACLS", "file://" + aclsPath);
+    os::setenv("MESOS_ACLS", path::uri(aclsPath));
 
     // Now execute the script.
     execl(path->c_str(), path->c_str(), (char*) nullptr);

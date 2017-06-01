@@ -110,7 +110,7 @@ TEST_F(MasterContenderDetectorTest, File)
   ASSERT_SOME(os::write(path, stringify(master.get()->pid)));
 
   Try<MasterDetector*> _detector =
-    MasterDetector::create("file://" + path);
+    MasterDetector::create(path::uri(path));
 
   ASSERT_SOME(_detector);
 
