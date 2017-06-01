@@ -220,6 +220,7 @@ nobase_include_HEADERS =			\
   stout/traits.hpp				\
   stout/unimplemented.hpp			\
   stout/unreachable.hpp				\
+  stout/uri.hpp				\
   stout/utils.hpp				\
   stout/uuid.hpp				\
   stout/variant.hpp				\
