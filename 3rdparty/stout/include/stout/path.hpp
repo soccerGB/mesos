@@ -63,6 +63,28 @@ inline std::string join(const std::vector<std::string>& paths)
 
 
 /**
+ * Returns a valid uri containing a filename
+ */
+inline std::string uri(const std::string& filepath, bool addprefix = true)
+{
+  if (filepath.empty()) {
+    return "";
+  }
+
+#ifndef __WINDOWS__
+  return (addprefix ? "file://" : "") + filepath;
+#else
+  // Note that URIs can't contain "\" characters, and this is a fundamental
+  // part of a filename on Windows. Fortunately, the Windows file APIs will
+  // accept "/" characters as a separator.
+  //
+  // On Windows, simply replace all "\" characters with "/" in the filename.
+  return (addprefix ? "file://" : "") + strings::replace(filepath, "\\", "/");
+#endif // __WINDOWS__
+}
+
+
+/**
  * Returns whether the given path is an absolute path.
  * If an invalid path is given, the return result is also invalid.
  */

@@ -220,6 +220,19 @@ TEST(PathTest, Comparison)
 }
 
 
+TEST(PathTest, URI)
+{
+  EXPECT_EQ("", path::uri(""));
+  EXPECT_EQ("file:///absolute/path/on/linux", path::uri("/absolute/path/on/linux"));
+  EXPECT_EQ("/absolute/path/on/linux", path::uri("/absolute/path/on/linux", false));
+
+#ifdef __WINDOWS__
+  EXPECT_EQ("file://c:/somedir/somefile", path::uri("c:\\somedir\\somefile"));
+  EXPECT_EQ("c:/somedir/somefile", path::uri("c:\\somedir\\somefile", false));
+#endif // __WINDOWS__
+}
+
+
 class PathFileTest : public TemporaryDirectoryTest {};
 
 
