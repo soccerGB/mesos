@@ -25,6 +25,25 @@
 
 namespace path {
 
+//
+// Normalizes a filename for the platform.
+//
+// On Linux, this does nothing.
+// On Windows, this converts "/" characters to "\" characters. The Windows
+//   file system APIs don't work with "/" in the filename when using long
+//   paths (although they do work fine if the file path happens to be
+//   short).
+//
+inline std::string normalize(const std::string& filepath)
+{
+#ifndef __WINDOWS__
+  return filepath;
+#else
+  return strings::replace(filepath, "/", "\\");
+#endif // __WINDOWS__
+}
+
+
 // Base case.
 inline std::string join(
     const std::string& path1,
