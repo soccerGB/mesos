@@ -220,6 +220,18 @@ TEST(PathTest, Comparison)
 }
 
 
+TEST(PathTest, Normalize)
+{
+  EXPECT_EQ("", path::normalize(""));
+#ifndef __WINDOWS__
+  EXPECT_EQ("/absolute/path/on/linux", path::normalize("/absolute/path/on/linux"));
+#else
+  EXPECT_EQ("c:\\somedir\\somefile", path::normalize("c:/somedir/somefile"));
+  EXPECT_EQ("c:\\somedir\\somefile", path::normalize("c:\\somedir\\somefile"));
+#endif // __WINDOWS__
+}
+
+
 class PathFileTest : public TemporaryDirectoryTest {};
 
 
