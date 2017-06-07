@@ -37,6 +37,7 @@ set(STOUT_ROOT_TESTS_SRC
   mac_tests.cpp
   main.cpp
   multimap_tests.cpp
+  net_tests.cpp
   none_tests.cpp
   numify_tests.cpp
   option_tests.cpp
