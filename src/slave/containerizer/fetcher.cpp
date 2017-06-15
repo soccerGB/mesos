@@ -823,6 +823,10 @@ Future<Nothing> FetcherProcess::run(
 
   environment["MESOS_FETCHER_INFO"] = stringify(JSON::protobuf(info));
 
+  // ********* DEBUG CODE - REMOVE THIS **********
+  std::cout << "Process Environment:" << std::endl 
+    << "$env:MESOS_FETCHER_INFO='" << stringify(JSON::protobuf(info)) << "'" << std::endl;
+
   if (!flags.hadoop_home.empty()) {
     environment["HADOOP_HOME"] = flags.hadoop_home;
   }
