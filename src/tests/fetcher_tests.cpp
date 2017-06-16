@@ -240,6 +240,9 @@ TEST_F(FetcherTest, AbsoluteCustomSubdirectoryFails)
 // Negative test: invalid user name. Copied from FileTest, so this
 // normally would succeed, but here a bogus user name is specified.
 // So we check for fetch failure.
+//
+// This won't work on Windows because file ownership and permissions
+// support isn't implemented.
 TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, InvalidUser)
 {
   string fromDir = path::join(os::getcwd(), "from");
