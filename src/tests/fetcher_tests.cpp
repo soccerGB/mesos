@@ -168,7 +168,6 @@ TEST_F(FetcherTest, ROOT_RootProtectedFileURI)
 #endif // __WINDOWS__
 
 
-//TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, CustomOutputFileSubdirectory)
 TEST_F(FetcherTest, CustomOutputFileSubdirectory)
 {
   string testFile = path::join(os::getcwd(), "test");
@@ -204,7 +203,7 @@ TEST_F(FetcherTest, CustomOutputFileSubdirectory)
 // Negative test: invalid custom URI output file. If the user specifies a
 // path for the file saved in the sandbox that has a directory component,
 // it must be a relative path.
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, AbsoluteCustomSubdirectoryFails)
+TEST_F(FetcherTest, AbsoluteCustomSubdirectoryFails)
 {
   string fromDir = path::join(os::getcwd(), "from");
   ASSERT_SOME(os::mkdir(fromDir));
