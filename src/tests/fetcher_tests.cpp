@@ -284,7 +284,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, InvalidUser)
 
 // Negative test: URI leading to non-existing file. Copied from FileTest,
 // but here the resource is missing. So we check for fetch failure.
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, NonExistingFile)
+TEST_F(FetcherTest, NonExistingFile)
 {
   string fromDir = path::join(os::getcwd(), "from");
   ASSERT_SOME(os::mkdir(fromDir));
