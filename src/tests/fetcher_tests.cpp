@@ -341,7 +341,7 @@ TEST_F(FetcherTest, MalformedURI)
 }
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, AbsoluteFilePath)
+TEST_F(FetcherTest, AbsoluteFilePath)
 {
   string fromDir = path::join(os::getcwd(), "from");
   ASSERT_SOME(os::mkdir(fromDir));
@@ -359,7 +359,13 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, AbsoluteFilePath)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
+#ifndef __WINDOWS__
   uri->set_value(testPath);
+#else
+  // This test isn't passing URI via "file://" prefix, so "fix up" manually
+  // (We can't pass URI with Window's "\" separators)
+  uri->set_value(strings::replace(testPath, "\\", "/"));
+#endif
 
   Fetcher fetcher(flags);
 
