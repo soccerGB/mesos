@@ -143,7 +143,11 @@ public:
   Path() : value() {}
 
   explicit Path(const std::string& path)
+#ifndef __WINDOWS__
     : value(strings::remove(path, "file://", strings::PREFIX)) {}
+#else
+    : value(path::normalize(strings::remove(path, "file://", strings::PREFIX))) {}
+#endif
 
   // TODO(cmaloney): Add more useful operations such as 'directoryname()',
   // 'filename()', etc.
