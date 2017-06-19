@@ -41,6 +41,7 @@ public:
   {
     std::vector<char*> _argv;
     foreach (const std::string& arg, iterable) {
+      args.emplace_back(arg);
       char* _arg = new char[arg.size() + 1];
       ::memcpy(_arg, arg.c_str(), arg.size() + 1);
       _argv.emplace_back(_arg);
@@ -67,9 +68,15 @@ public:
     return argv;
   }
 
+  operator std::vector<std::string>()
+  {
+    return args;
+  }
+
 private:
   char** argv;
   size_t size;
+  std::vector<std::string> args;
 };
 
 } // namespace raw {
