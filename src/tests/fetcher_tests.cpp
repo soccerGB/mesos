@@ -557,7 +557,7 @@ TEST_F(FetcherTest, OSNetUriSpaceTest)
 }
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, FileLocalhostURI)
+TEST_F(FetcherTest, FileLocalhostURI)
 {
   string fromDir = path::join(os::getcwd(), "from");
   ASSERT_SOME(os::mkdir(fromDir));
@@ -575,7 +575,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, FileLocalhostURI)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value(path::join("file://localhost", testFile));
+  uri->set_value(path::uri(testFile));
 
   Fetcher fetcher(flags);
 
