@@ -19,6 +19,7 @@
 
 #include <stout/error.hpp>
 #include <stout/windows.hpp>
+#include <stout/stringify.hpp>
 
 
 // A useful type that can be used to represent a Try that has failed. This is a
@@ -82,22 +83,23 @@ private:
     // the documentation as well.
     //
     // [1] https://msdn.microsoft.com/en-us/library/windows/desktop/ms679351(v=vs.85).aspx
-    LPSTR message_buffer;
-    size_t size = FormatMessage(
+    wchar_t *message_buffer = nullptr;
+    size_t size = ::FormatMessageW(
         allocate_message_buffer,
         nullptr,                 // Ignored.
         errorCode,
         default_language,
-        (LPSTR) &message_buffer, // See comment above about quirky cast.
+        // See comment above about quirky cast.
+        (LPWSTR)&message_buffer,
         0,                       // Ignored.
         nullptr);                // Ignored.
 
-    std::string message(message_buffer, size);
+    std::wstring message(message_buffer, size);
 
     // Required per documentation above.
-    LocalFree(message_buffer);
+    ::LocalFree(message_buffer);
 
-    return message;
+    return stringify(message);
   }
 };
 
