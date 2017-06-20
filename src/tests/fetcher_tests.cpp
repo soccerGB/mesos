@@ -379,7 +379,7 @@ TEST_F(FetcherTest, AbsoluteFilePath)
 }
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, RelativeFilePath)
+TEST_F(FetcherTest, RelativeFilePath)
 {
   string fromDir = path::join(os::getcwd(), "from");
   ASSERT_SOME(os::mkdir(fromDir));
