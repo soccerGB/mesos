@@ -466,8 +466,7 @@ public:
 };
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, OSNetUriTest)
-//TEST_F(FetcherTest, OSNetUriTest)
+TEST_F(FetcherTest, OSNetUriTest)
 {
   Http http;
 
@@ -477,7 +476,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, OSNetUriTest)
       "http",
       address.ip,
       address.port,
-      path::join(http.process->self().id, "test"));
+      path::join(http.process->self().id, "test", '/'));
 
   string localFile = path::join(os::getcwd(), "test");
   EXPECT_FALSE(os::exists(localFile));
