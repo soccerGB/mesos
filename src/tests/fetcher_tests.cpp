@@ -512,7 +512,7 @@ TEST_F(FetcherTest, OSNetUriTest)
 // characters. This was added as a verification for MESOS-2862.
 //
 // TODO(hartem): This test case should be merged with the previous one.
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, OSNetUriSpaceTest)
+TEST_F(FetcherTest, OSNetUriSpaceTest)
 {
   Http http;
 
@@ -522,7 +522,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, OSNetUriSpaceTest)
       "http",
       address.ip,
       address.port,
-      path::join(http.process->self().id, "test"));
+      path::join(http.process->self().id, "test", '/'));
 
   string localFile = path::join(os::getcwd(), "test");
   EXPECT_FALSE(os::exists(localFile));
