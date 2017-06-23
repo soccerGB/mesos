@@ -104,9 +104,6 @@ TEST_F(FetcherTest, FileURI)
   string localFile = path::join(os::getcwd(), "test");
   EXPECT_FALSE(os::exists(localFile));
 
-  // Test code
-  testFile = strings::replace(testFile, "\\", "/");
-
   slave::Flags flags;
   flags.launcher_dir = getLauncherDir();
 
@@ -359,13 +356,7 @@ TEST_F(FetcherTest, AbsoluteFilePath)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-#ifndef __WINDOWS__
-  uri->set_value(testPath);
-#else
-  // This test isn't passing URI via "file://" prefix, so "fix up" manually
-  // (We can't pass URI with Window's "\" separators)
-  uri->set_value(strings::replace(testPath, "\\", "/"));
-#endif
+  uri->set_value(path::uri(testPath, false));
 
   Fetcher fetcher(flags);
 
@@ -589,6 +580,7 @@ TEST_F(FetcherTest, FileLocalhostURI)
 }
 
 
+// Test disabled on Windows until permissions handling is worked out
 TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, NoExtractNotExecutable)
 {
   // First construct a temporary file that can be fetched.
@@ -603,7 +595,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, NoExtractNotExecutable)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value(path.get());
+  uri->set_value(path::uri(path.get(), false));
   uri->set_executable(false);
   uri->set_extract(false);
 
@@ -629,6 +621,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, NoExtractNotExecutable)
 }
 
 
+// Test disabled on Windows until permissions handling is worked out
 TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, NoExtractExecutable)
 {
   // First construct a temporary file that can be fetched.
@@ -670,6 +663,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, NoExtractExecutable)
 }
 
 
+// Test disabled on Windows until permissions handling is worked out
 TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ExtractNotExecutable)
 {
   // First construct a temporary file that can be fetched and archived with tar
@@ -725,6 +719,9 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ExtractNotExecutable)
 
 
 // Tests extracting tar file with extension .tar.
+//
+// Won't be supported on Windows for now; long term thoughts are to perhaps
+// use a code library to provide 'tar' functionality programmatically.
 TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ExtractTar)
 {
   // First construct a temporary file that can be fetched and archived with
@@ -749,7 +746,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ExtractTar)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value(path.get() + ".tar");
+  uri->set_value(path::uri(path.get() + ".tar", false));
   uri->set_extract(true);
 
   slave::Flags flags;
@@ -770,6 +767,8 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ExtractTar)
 }
 
 
+// Won't be supported on Windows for now; long term thoughts are to perhaps
+// use a code library to provide 'gzip' functionality programmatically.
 TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ExtractGzipFile)
 {
   // First construct a temporary file that can be fetched and archived with
