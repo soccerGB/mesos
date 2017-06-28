@@ -860,7 +860,7 @@ TEST_F(FetcherTest, Unzip_ExtractFile)
 }
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, UNZIP_ExtractInvalidFile)
+TEST_F(FetcherTest, Unzip_ExtractInvalidFile)
 {
   // Construct a tmp file that can be filled with broken zip.
   string fromDir = path::join(os::getcwd(), "from");
@@ -888,7 +888,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, UNZIP_ExtractInvalidFile)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value(path.get() + ".zip");
+  uri->set_value(path::uri(path.get() + ".zip", false));
   uri->set_extract(true);
 
   slave::Flags flags;
@@ -902,14 +902,30 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, UNZIP_ExtractInvalidFile)
       os::getcwd(),
       None());
 
+#if __WINDOWS__
+  // On Windows, Powershell doens't consider a CRC error to be an error,
+  // so we get success back. On Linux, unzip returns '2' for a bad CRC.
+  //
+  // TODO(jeffaco): When we move to programmatically dealing with various
+  // data files (tar, gzip, zip, etc), we should be able to resolve this.
+  // See MESOS-7740 for further details.
+  AWAIT_READY(fetch);
+#else
   AWAIT_FAILED(fetch);
+#endif
 
   string extractedFile = path::join(os::getcwd(), "world");
   ASSERT_TRUE(os::exists(extractedFile));
 
   ASSERT_SOME_EQ("hello hello\n", os::read(extractedFile));
 
+#if __WINDOWS__
+  // TODO(jeffcof): Eliminate with programmatic decoding of container files.
+  // See MESOS-7740 for further details.
+  verifyMetrics(1, 0);
+#else
   verifyMetrics(1, 1);
+#endif
 }
 
 
