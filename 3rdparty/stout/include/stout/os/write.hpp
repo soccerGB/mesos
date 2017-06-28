@@ -67,7 +67,11 @@ inline Try<Nothing> write(const std::string& path, const std::string& message)
 {
   Try<int_fd> fd = os::open(
       path,
+#if __WINDOWS__
+      O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_BINARY,
+#else
       O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC,
+#endif
       S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
   if (fd.isError()) {
