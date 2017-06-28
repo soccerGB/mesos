@@ -805,12 +805,10 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, ExtractGzipFile)
 
   ASSERT_SOME_EQ("hello world", os::read(extractedFile));
 
-  verifyMetrics(1, 0);
 }
 
 
-//TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, UNZIP_ExtractFile)
-TEST_F(FetcherTest, UNZIP_ExtractFile)
+TEST_F(FetcherTest, Unzip_ExtractFile)
 {
   // Construct a tmp file that can be fetched and archived with zip.
   string fromDir = path::join(os::getcwd(), "from");
@@ -837,7 +835,7 @@ TEST_F(FetcherTest, UNZIP_ExtractFile)
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value(path.get() + ".zip");
+  uri->set_value(path::uri(path.get() + ".zip", false));
   uri->set_extract(true);
 
   slave::Flags flags;

@@ -91,7 +91,12 @@ static Try<bool> extract(
     in = Subprocess::PATH(sourcePath);
     out = Subprocess::PATH(destinationPath);
   } else if (strings::endsWith(sourcePath, ".zip")) {
+#if __WINDOWS__
+    command = {"powershell", "-noprofile", "-command",
+        "Expand-Archive", "-force", sourcePath, destinationDirectory};
+#else
     command = {"unzip", "-o", "-d", destinationDirectory, sourcePath};
+#endif
   } else {
     return false;
   }
