@@ -929,9 +929,7 @@ TEST_F(FetcherTest, Unzip_ExtractInvalidFile)
 }
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(
-    FetcherTest,
-    UNZIP_ExtractFileWithDuplicatedEntries)
+TEST_F(FetcherTest, Unzip_ExtractFileWithDuplicatedEntries)
 {
   // Construct a tmp file that can be filled with zip containing
   // duplicates.
@@ -961,7 +959,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(
 
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value(path.get() + ".zip");
+  uri->set_value(path::uri(path.get() + ".zip", false));
   uri->set_extract(true);
 
   slave::Flags flags;
