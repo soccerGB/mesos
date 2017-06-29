@@ -984,7 +984,7 @@ TEST_F(FetcherTest, Unzip_ExtractFileWithDuplicatedEntries)
 }
 
 
-TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, UseCustomOutputFile)
+TEST_F(FetcherTest, UseCustomOutputFile)
 {
   // First construct a temporary file that can be fetched.
   Try<string> dir = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
@@ -1001,7 +1001,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(FetcherTest, UseCustomOutputFile)
   const string customOutputFile = "custom.txt";
   CommandInfo commandInfo;
   CommandInfo::URI* uri = commandInfo.add_uris();
-  uri->set_value(path.get());
+  uri->set_value(path::uri(path.get(), false));
   uri->set_extract(true);
   uri->set_output_file(customOutputFile);
 
