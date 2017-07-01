@@ -115,9 +115,23 @@ Try<Owned<HDFS>> HDFS::create(const Option<string>& _hadoop)
   }
 
   // Check if the hadoop client is available.
-  Try<string> out = os::shell(hadoop + " version 2>&1");
-  if (out.isError()) {
-    return Error(out.error());
+  Try<Subprocess> subprocess = process::subprocess(hadoop + " version 2>&1");
+
+  if (subprocess.isError()) {
+    return Error(
+        "Failed to exec hadoop subprocess: " + subprocess.error());
+  }
+
+  Option<int> subStatus = subprocess->status().get();
+  if (subStatus.isNone()) {
+    return Error("No status found for 'hadoop version' command");
+  }
+
+  // Check the final status of the command
+  int status = subStatus.get();
+  if (status != 0) {
+    return Error("Hadoop client is not available, exit status "
+                 + stringify(status));
   }
 
   return Owned<HDFS>(new HDFS(hadoop));
