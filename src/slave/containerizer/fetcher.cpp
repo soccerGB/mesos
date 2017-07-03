@@ -204,10 +204,7 @@ Result<string> Fetcher::uriToLocalPath(
     fileUri = true;
   }
 
-#ifndef __WINDOWS__
-  const bool isRelativePath = !strings::startsWith(path, "/");
-
-  if (isRelativePath) {
+  if (!path::absolute(path)) {
     if (fileUri) {
       return Error("File URI only supports absolute paths");
     }
@@ -223,9 +220,8 @@ Result<string> Fetcher::uriToLocalPath(
                 << "making it: '" << path << "'";
     }
   }
-#endif // __WINDOWS__
 
-  return path;
+  return path::normalize(path);
 }
 
 

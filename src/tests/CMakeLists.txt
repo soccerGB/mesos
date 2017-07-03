@@ -267,6 +267,7 @@ add_dependencies(
   mesos-default-executor
   mesos-docker-executor
   mesos-executor
+  mesos-fetcher
   mesos-containerizer
   mesos-tcp-connect
   mesos-usage)
@@ -277,7 +278,6 @@ if (NOT WIN32)
   add_dependencies(
     mesos-tests
     mesos-execute
-    mesos-fetcher
     mesos-log
     mesos-local
     mesos-master
