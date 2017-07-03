@@ -29,6 +29,7 @@
 #include <stout/strings.hpp>
 
 #include <stout/os/constants.hpp>
+#include <stout/os/copyfile.hpp>
 
 #include <mesos/mesos.hpp>
 
@@ -90,7 +91,12 @@ static Try<bool> extract(
     in = Subprocess::PATH(sourcePath);
     out = Subprocess::PATH(destinationPath);
   } else if (strings::endsWith(sourcePath, ".zip")) {
+#if __WINDOWS__
+    command = {"powershell", "-noprofile", "-command",
+        "Expand-Archive", "-force", sourcePath, destinationDirectory};
+#else
     command = {"unzip", "-o", "-d", destinationDirectory, sourcePath};
+#endif
   } else {
     return false;
   }
@@ -193,19 +199,11 @@ static Try<string> copyFile(
     const string& sourcePath,
     const string& destinationPath)
 {
-  int status = os::spawn("cp", {"cp", sourcePath, destinationPath});
+  Try<Nothing> result = os::copyfile(sourcePath, destinationPath);
 
-  if (status == -1) {
-    return ErrnoError("Failed to copy '" + sourcePath + "'");
+  if (result.isError()) {
+    return Error(result.error());
   }
-
-  if (!WSUCCEEDED(status)) {
-    return Error(
-        "Failed to copy '" + sourcePath + "': " + WSTRINGIFY(status));
-  }
-
-  LOG(INFO) << "Copied resource '" << sourcePath
-            << "' to '" << destinationPath << "'";
 
   return destinationPath;
 }
@@ -287,7 +285,7 @@ static Try<string> fetchBypassingCache(
   // TODO(mrbrowning): Factor out duplicated processing of "output_file" field
   // here and in fetchFromCache into a separate helper function.
   if (uri.has_output_file()) {
-    string dirname = Path(uri.output_file()).dirname();
+    string dirname = Path(path::from_uri(uri.output_file())).dirname();
     if (dirname != ".") {
       Try<Nothing> result =
         os::mkdir(path::join(sandboxDirectory, dirname), true);
